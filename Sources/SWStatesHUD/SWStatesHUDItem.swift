@@ -7,7 +7,11 @@
 
 import SwiftUI
 
-public struct SWStatesHUDItem {
+public struct SWStatesHUDItem: Identifiable {
+    static var currentItemID: UUID?
+    
+    public let id: UUID = .init()
+    
     let type: SWStatesHUDType
     let message: LocalizedStringKey?
     let dismissAfter: TimeInterval?

@@ -13,7 +13,7 @@ struct SWStatesHUD: View {
     var body: some View {
         ZStack {
             Color.black
-                .opacity(0.6)
+                .opacity(0.4)
             
             hud
         }
@@ -44,7 +44,7 @@ struct SWStatesHUD: View {
         .foregroundColor(.primary)
         .padding()
         .background(
-            Color(uiColor: .systemGray3)
+            Color(uiColor: .systemGray5)
         )
         .cornerRadius(16)
         .shadow(radius: 8)

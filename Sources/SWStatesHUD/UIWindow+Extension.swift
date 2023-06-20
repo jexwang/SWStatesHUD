@@ -17,7 +17,7 @@ extension UIWindow {
             self.init(frame: UIScreen.main.bounds)
         }
         
-        windowLevel = .alert - 1
+        windowLevel = .alert - 1 // Doesn't work with SwiftUI alert
         
         let hostingController = UIHostingController(rootView: view)
         hostingController.view.backgroundColor = .clear
