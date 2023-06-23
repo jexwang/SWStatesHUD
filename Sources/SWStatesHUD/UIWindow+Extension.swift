@@ -11,9 +11,13 @@ extension UIWindow {
     static var instanceForStatesHUD: UIWindow?
     
     convenience init(view: some View) {
-        if let scene = UIApplication.shared.connectedScenes.filter({ $0.activationState == .foregroundActive }).first as? UIWindowScene {
+        if let scene = UIApplication.shared.connectedScenes.filter(
+            { $0.activationState == .foregroundActive }
+        ).first as? UIWindowScene {
             self.init(windowScene: scene)
-        } else {
+        } else if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            self.init(windowScene: scene)
+        }else {
             self.init(frame: UIScreen.main.bounds)
         }
         

@@ -7,17 +7,30 @@
 
 import SwiftUI
 
-struct SWStatesHUD: View {
+public struct SWStatesHUD: View {
     let item: SWStatesHUDItem
     
-    var body: some View {
+    @State private var opacity: Double = 1
+    
+    public var body: some View {
         ZStack {
             Color.black
                 .opacity(0.4)
             
             hud
         }
+        .opacity(opacity)
         .ignoresSafeArea()
+        .onAppear {
+            if item.animated, let dismissAfter = item.dismissAfter {
+                withAnimation(
+                    .linear(duration: SWStatesHUDItem.animationDuration)
+                    .delay(dismissAfter)
+                ) {
+                    opacity = 0
+                }
+            }
+        }
     }
     
     private var hud: some View {
@@ -52,6 +65,35 @@ struct SWStatesHUD: View {
     }
 }
 
+extension SWStatesHUD {
+    public static func show(item: SWStatesHUDItem) {
+        guard item.id != SWStatesHUDItem.currentItemID else { return }
+        
+        let statesHUD = Self(item: item)
+        UIWindow.instanceForStatesHUD = UIWindow(view: statesHUD)
+        
+        if let dismissTimeInterval = item.dismissAfter {
+            var timeInterval = item.animated ? SWStatesHUDItem.animationDuration : 0
+            timeInterval += dismissTimeInterval
+            
+            Timer.scheduledTimer(
+                withTimeInterval: timeInterval,
+                repeats: false
+            ) { _ in
+                Self.dismiss()
+                item.completion?()
+            }
+        }
+        
+        SWStatesHUDItem.currentItemID = item.id
+    }
+    
+    public static func dismiss() {
+        UIWindow.instanceForStatesHUD = nil
+        SWStatesHUDItem.currentItemID = nil
+    }
+}
+
 struct SWStatesHUD_Previews: PreviewProvider {
     static let item: SWStatesHUDItem = .init(type: .custom(AnyView(customView)), message: "Loading...")
     
@@ -60,7 +102,7 @@ struct SWStatesHUD_Previews: PreviewProvider {
     }
     
     static var customView: some View {
-        Image(systemName: "phone")
+        Image(systemName: "circle.dotted")
             .font(.largeTitle)
     }
 }
